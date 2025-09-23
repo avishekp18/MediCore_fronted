@@ -34,6 +34,7 @@ const Login = () => {
 
       login(data.user); // update context
       toast.success(data.message);
+      navigate("/");
     } catch (err) {
       toast.error(err?.response?.data?.message || "Login failed");
     } finally {
