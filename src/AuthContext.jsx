@@ -1,9 +1,11 @@
 import { createContext, useState, useEffect, useContext } from "react";
 import axios from "axios";
 
+// Create context
 const AuthContext = createContext();
-axios.defaults.withCredentials = true; // global setting
 
+// Global Axios settings
+axios.defaults.withCredentials = true; // always send cookies
 
 export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
@@ -18,8 +20,14 @@ export const AuthProvider = ({ children }) => {
                     "https://medicore-backend-sv2c.onrender.com/api/v1/user/patient/me",
                     { withCredentials: true }
                 );
-                setUser(res.data.user);
-                setIsAuthenticated(true);
+
+                if (res.data.user) {
+                    setUser(res.data.user);
+                    setIsAuthenticated(true);
+                } else {
+                    setUser(null);
+                    setIsAuthenticated(false);
+                }
             } catch (err) {
                 setUser(null);
                 setIsAuthenticated(false);
@@ -27,21 +35,34 @@ export const AuthProvider = ({ children }) => {
                 setLoading(false);
             }
         };
+
         checkLogin();
     }, []);
 
     // Login function
-    const login = (userData) => {
-        setUser(userData);
-        setIsAuthenticated(true);
+    const login = async (email, password) => {
+        try {
+            const res = await axios.post(
+                "https://medicore-backend-sv2c.onrender.com/api/v1/user/login",
+                { email, password },
+                { withCredentials: true }
+            );
+
+            setUser(res.data.user);
+            setIsAuthenticated(true);
+            return { success: true };
+        } catch (err) {
+            return { success: false, message: err?.response?.data?.message || "Login failed" };
+        }
     };
 
     // Logout function
     const logout = async () => {
         try {
-            await axios.get("https://medicore-backend-sv2c.onrender.com/api/v1/user/patient/logout", {
-                withCredentials: true,
-            });
+            await axios.get(
+                "https://medicore-backend-sv2c.onrender.com/api/v1/user/patient/logout",
+                { withCredentials: true }
+            );
         } catch (err) {
             console.error("Logout failed", err);
         } finally {
@@ -57,4 +78,5 @@ export const AuthProvider = ({ children }) => {
     );
 };
 
+// Custom hook
 export const useAuth = () => useContext(AuthContext);
