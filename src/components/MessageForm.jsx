@@ -45,7 +45,7 @@ const MessageForm = () => {
 
     try {
       const { data } = await axios.post(
-        "http://localhost:4000/api/v1/message/",
+        "https://medicore-backend-sv2c.onrender.com/api/v1/message/",
         formData,
         {
           withCredentials: true,

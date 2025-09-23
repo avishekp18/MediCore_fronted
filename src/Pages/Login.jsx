@@ -25,7 +25,7 @@ const Login = () => {
     setSubmitting(true);
 
     try {
-      const backendURL = "http://localhost:4000";
+      const backendURL = "https://medicore-backend-sv2c.onrender.com";
       const { data } = await axios.post(
         `${backendURL}/api/v1/user/login`,
         { ...formData, role: "Patient" },

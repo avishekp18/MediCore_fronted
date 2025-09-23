@@ -20,7 +20,7 @@ const Dashboard = () => {
         const fetchAppointments = async () => {
             try {
                 const { data } = await axios.get(
-                    `http://localhost:4000/api/v1/appointment/user/${user._id}`,
+                    `https://medicore-backend-sv2c.onrender.com/api/v1/appointment/user/${user._id}`,
                     { withCredentials: true }
                 );
                 setAppointments(data.appointments || []);

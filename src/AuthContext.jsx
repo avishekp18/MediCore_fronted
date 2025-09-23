@@ -13,7 +13,7 @@ export const AuthProvider = ({ children }) => {
         const checkLogin = async () => {
             try {
                 const res = await axios.get(
-                    "http://localhost:4000/api/v1/user/patient/me",
+                    "https://medicore-backend-sv2c.onrender.com/api/v1/user/patient/me",
                     { withCredentials: true }
                 );
                 setUser(res.data.user);
@@ -37,7 +37,7 @@ export const AuthProvider = ({ children }) => {
     // Logout function
     const logout = async () => {
         try {
-            await axios.get("http://localhost:4000/api/v1/user/patient/logout", {
+            await axios.get("https://medicore-backend-sv2c.onrender.com/api/v1/user/patient/logout", {
                 withCredentials: true,
             });
         } catch (err) {

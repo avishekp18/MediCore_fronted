@@ -25,8 +25,7 @@ const Register = () => {
   const handleRegistration = async (e) => {
     e.preventDefault();
     try {
-      const { data } = await axios.post(
-        `${import.meta.env.VITE_API_URL}/api/v1/user/patient/register`,
+      const { data } = await axios.post("https://medicore-backend-sv2c.onrender.com/api/v1/user/patient/register",
         formData,
         { withCredentials: true, headers: { "Content-Type": "application/json" } }
       );

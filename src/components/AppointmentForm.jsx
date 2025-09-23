@@ -52,7 +52,7 @@ const AppointmentForm = () => {
   useEffect(() => {
     const fetchDoctors = async () => {
       try {
-        const { data } = await axios.get("http://localhost:4000/api/v1/user/doctors", {
+        const { data } = await axios.get("https://medicore-backend-sv2c.onrender.com/api/v1/user/doctors", {
           withCredentials: true,
         });
         setDoctors(data.doctors);
@@ -100,7 +100,7 @@ const AppointmentForm = () => {
         doctor_lastName: selectedDoctor.lastName,
       };
 
-      await axios.post("http://localhost:4000/api/v1/appointment/", payload, {
+      await axios.post("https://medicore-backend-sv2c.onrender.com/api/v1/appointment/", payload, {
         withCredentials: true,
         headers: { "Content-Type": "application/json" },
       });
