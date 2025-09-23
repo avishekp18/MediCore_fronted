@@ -1,9 +1,16 @@
-import { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 import { Navigate } from "react-router-dom";
-import { AuthContext } from "../AuthContext.jsx";
+import { useAuth } from "../AuthContext.jsx";
+import { toast } from "react-toastify";
 
 const ProtectedRoute = ({ children }) => {
-    const { isAuthenticated } = useContext(AuthContext);
+    const { isAuthenticated } = useAuth();
+
+    useEffect(() => {
+        if (!isAuthenticated) {
+            toast.info("Please log in first to access this page");
+        }
+    }, [isAuthenticated]);
 
     if (!isAuthenticated) {
         return <Navigate to="/login" replace />;

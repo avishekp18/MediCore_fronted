@@ -14,7 +14,6 @@ const Footer = () => {
 
         {/* Brand Info */}
         <div className="space-y-4">
-          <img src="/logo.png" alt="MediCore Logo" className="w-32 h-auto" />
           <h3 className="text-2xl font-bold">MediCore Hospital</h3>
           <p className="text-gray-200">Your trusted healthcare partner for life.</p>
           {/* Social Media */}

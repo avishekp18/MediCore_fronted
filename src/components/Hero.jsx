@@ -1,4 +1,6 @@
 import React from "react";
+import { Link } from "react-router-dom";
+
 
 const Hero = ({ title, imageUrl }) => {
   return (
@@ -17,9 +19,11 @@ const Hero = ({ title, imageUrl }) => {
             MediCore Medical Institute offers expert, compassionate care tailored to each patient. Our skilled team ensures a smooth, seamless journey toward optimal health and wellness.
           </p>
           <div className="mt-4">
-            <button className="px-6 py-3 bg-indigo-600 text-white font-semibold rounded-lg shadow-md hover:shadow-lg transition transform hover:-translate-y-1">
+            <Link
+              to="/appointment"
+              className="inline-block px-6 py-3 bg-indigo-600 text-white font-semibold rounded-lg shadow-md hover:shadow-lg transition transform hover:-translate-y-1">
               Book Appointment
-            </button>
+            </Link>
           </div>
         </div>
 
