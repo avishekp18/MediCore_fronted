@@ -1,3 +1,4 @@
+// src/components/AppointmentForm.jsx
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
@@ -52,10 +53,11 @@ const AppointmentForm = () => {
   useEffect(() => {
     const fetchDoctors = async () => {
       try {
-        const { data } = await axios.get("https://medicore-backend-sv2c.onrender.com/api/v1/user/doctors", {
-          withCredentials: true,
-        });
-        setDoctors(data.doctors);
+        const { data } = await axios.get(
+          "https://medicore-backend-sv2c.onrender.com/api/v1/user/doctor",
+          { withCredentials: true }
+        );
+        setDoctors(data.doctors || []);
       } catch (error) {
         toast.error("Failed to fetch doctors");
       }
@@ -100,12 +102,28 @@ const AppointmentForm = () => {
         doctor_lastName: selectedDoctor.lastName,
       };
 
-      await axios.post("https://medicore-backend-sv2c.onrender.com/api/v1/appointment/", payload, {
-        withCredentials: true,
-        headers: { "Content-Type": "application/json" },
-      });
+      // send request and capture response
+      const res = await axios.post(
+        "https://medicore-backend-sv2c.onrender.com/api/v1/appointment/",
+        payload,
+        {
+          withCredentials: true,
+          headers: { "Content-Type": "application/json" },
+        }
+      );
+
+      // prefer API returned appointment object; fallback to response data or payload
+      const created =
+        res.data?.appointment ?? res.data ?? { ...payload, _id: undefined };
 
       toast.success("Appointment successfully created!");
+
+      // Dispatch global event so other components can react immediately
+      window.dispatchEvent(new CustomEvent("appointmentCreated", { detail: created }));
+      window.dispatchEvent(
+        new CustomEvent("appointmentUpdated", { detail: res.data.appointment })
+      );
+
       // Reset only relevant fields
       setFormData((prev) => ({
         ...prev,
@@ -119,7 +137,9 @@ const AppointmentForm = () => {
         hasVisited: false,
       }));
     } catch (error) {
-      toast.error(error.response?.data?.message || error.message || "Something went wrong!");
+      toast.error(
+        error?.response?.data?.message || error.message || "Something went wrong!"
+      );
     } finally {
       setSubmitting(false);
     }
@@ -128,7 +148,9 @@ const AppointmentForm = () => {
   return (
     <div className="min-h-[calc(100vh-64px)] flex items-center justify-center bg-indigo-50 py-10 px-4">
       <div className="bg-white shadow-2xl rounded-3xl max-w-4xl w-full p-8 sm:p-10">
-        <h2 className="text-3xl font-bold text-gray-800 mb-6 text-center">Book an Appointment</h2>
+        <h2 className="text-3xl font-bold text-gray-800 mb-6 text-center">
+          Book an Appointment
+        </h2>
         <form onSubmit={handleSubmit} className="space-y-4">
           {/* Name & Email */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

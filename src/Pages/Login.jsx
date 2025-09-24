@@ -1,3 +1,4 @@
+// src/components/Login.jsx
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
@@ -13,7 +14,7 @@ const Login = () => {
 
   // Redirect automatically when login succeeds
   useEffect(() => {
-    if (isAuthenticated) navigate("/");
+    if (isAuthenticated) navigate("/", { replace: true });
   }, [isAuthenticated, navigate]);
 
   const handleChange = (e) => {
@@ -32,9 +33,12 @@ const Login = () => {
         { withCredentials: true, headers: { "Content-Type": "application/json" } }
       );
 
-      login(data.user); // update context
-      toast.success(data.message);
-      navigate("/");
+      // Wait for the context to be updated before navigating.
+      // after successful login response
+      await login(data.user);
+      toast.success(data.message || "Login successful");
+      navigate("/", { replace: true });
+
     } catch (err) {
       toast.error(err?.response?.data?.message || "Login failed");
     } finally {
@@ -43,6 +47,7 @@ const Login = () => {
   };
 
   return (
+    /* ... your JSX unchanged ... */
     <div className="min-h-[calc(100vh-64px)] flex items-center justify-center bg-gradient-to-br from-indigo-50 to-white py-10">
       <div className="bg-white shadow-2xl rounded-3xl max-w-md w-full p-8 sm:p-10">
         <h2 className="text-3xl font-bold text-center text-gray-800 mb-2">Sign In</h2>

@@ -1,11 +1,13 @@
+// src/components/Register.jsx
 import React, { useState } from "react";
 import { toast } from "react-toastify";
-import { useAuth } from "../AuthContext.jsx";
 import { Link, Navigate, useNavigate } from "react-router-dom";
 import axios from "axios";
+import { useAuth } from "../AuthContext.jsx";
 
 const Register = () => {
-  const { isAuthenticated, setUser, setIsAuthenticated } = useAuth();
+  // We do NOT auto-login after register; we redirect user to /login
+  const { isAuthenticated } = useAuth();
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
@@ -19,36 +21,80 @@ const Register = () => {
     password: "",
   });
 
+  const [loading, setLoading] = useState(false);
+
   const handleChange = (e) =>
     setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
 
   const handleRegistration = async (e) => {
     e.preventDefault();
+    if (loading) return; // guard against double submit
+    setLoading(true);
+
+    const SUCCESS_TOAST_ID = "register-success";
+    const ERROR_TOAST_ID = "register-error";
+
     try {
-      const { data } = await axios.post("https://medicore-backend-sv2c.onrender.com/api/v1/user/patient/register",
+      const response = await axios.post(
+        "https://medicore-backend-sv2c.onrender.com/api/v1/user/patient/register",
         formData,
-        { withCredentials: true, headers: { "Content-Type": "application/json" } }
+        {
+          withCredentials: true,
+          headers: { "Content-Type": "application/json" },
+        }
       );
 
-      toast.success(data.message);
+      const { data, status } = response;
 
-      // Update global auth state
-      setUser(data.user);
-      setIsAuthenticated(true);
+      // treat success only when backend indicates success
+      if (status >= 200 && status < 300 && data?.success) {
+        if (!toast.isActive(SUCCESS_TOAST_ID)) {
+          toast.success(data.message || "Registration successful", {
+            toastId: SUCCESS_TOAST_ID,
+          });
+        }
 
-      navigate("/"); // Redirect to home after registration
+        // Redirect user to login page (no auto-login)
+        navigate("/login", { replace: true });
+        return;
+      }
+
+      // Defensive: 2xx but success false
+      if (!data?.success) {
+        if (!toast.isActive(ERROR_TOAST_ID)) {
+          toast.error(data?.message || "Registration failed", {
+            toastId: ERROR_TOAST_ID,
+          });
+        }
+      }
     } catch (err) {
-      toast.error(err?.response?.data?.message || "Registration failed");
+      // Axios throws for non-2xx responses — show single error toast
+      const message =
+        err?.response?.data?.message ||
+        err?.message ||
+        "Registration failed (network or server error)";
+
+      if (!toast.isActive(ERROR_TOAST_ID)) {
+        toast.error(message, { toastId: ERROR_TOAST_ID });
+      }
+
+      // optional: console.error(err) for dev debugging
+      // console.error("Registration error:", err);
+    } finally {
+      setLoading(false);
     }
   };
 
-  if (isAuthenticated) return <Navigate to="/" />;
+  // If already authenticated, don't show register page
+  if (isAuthenticated) return <Navigate to="/" replace />;
 
   return (
     <div className="py-20 pt-25">
       <div className="max-w-2xl mx-auto bg-white shadow-md rounded-2xl p-6">
         <h2 className="text-2xl font-bold text-center mb-2">Sign Up</h2>
-        <p className="text-gray-600 text-center mb-6">Please sign up to continue</p>
+        <p className="text-gray-600 text-center mb-6">
+          Please sign up to continue
+        </p>
 
         <form onSubmit={handleRegistration} className="space-y-4">
           {/* First + Last Name */}
@@ -65,6 +111,7 @@ const Register = () => {
                 onChange={handleChange}
                 required
                 className="w-full border rounded-lg p-2 focus:ring-2 focus:ring-blue-500"
+                autoComplete="given-name"
               />
             </div>
             <div>
@@ -79,6 +126,7 @@ const Register = () => {
                 onChange={handleChange}
                 required
                 className="w-full border rounded-lg p-2 focus:ring-2 focus:ring-blue-500"
+                autoComplete="family-name"
               />
             </div>
           </div>
@@ -97,6 +145,7 @@ const Register = () => {
                 onChange={handleChange}
                 required
                 className="w-full border rounded-lg p-2 focus:ring-2 focus:ring-blue-500"
+                autoComplete="email"
               />
             </div>
             <div>
@@ -111,6 +160,7 @@ const Register = () => {
                 onChange={handleChange}
                 required
                 className="w-full border rounded-lg p-2 focus:ring-2 focus:ring-blue-500"
+                autoComplete="tel"
               />
             </div>
           </div>
@@ -142,6 +192,7 @@ const Register = () => {
                 onChange={handleChange}
                 required
                 className="w-full border rounded-lg p-2 focus:ring-2 focus:ring-blue-500"
+                max={new Date().toISOString().split("T")[0]} // prevent future dates
               />
             </div>
           </div>
@@ -176,6 +227,7 @@ const Register = () => {
                 onChange={handleChange}
                 required
                 className="w-full border rounded-lg p-2 focus:ring-2 focus:ring-blue-500"
+                autoComplete="new-password"
               />
             </div>
           </div>
@@ -192,9 +244,11 @@ const Register = () => {
           <div className="text-center">
             <button
               type="submit"
-              className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg shadow-md transition"
+              disabled={loading}
+              className={`bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg shadow-md transition ${loading ? "opacity-50 cursor-not-allowed" : ""
+                }`}
             >
-              Register
+              {loading ? "Registering..." : "Register"}
             </button>
           </div>
         </form>

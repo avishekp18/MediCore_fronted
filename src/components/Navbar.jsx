@@ -1,14 +1,24 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { GiHamburgerMenu } from "react-icons/gi";
 import { IoMdClose } from "react-icons/io";
 import { toast } from "react-toastify";
 import { useAuth } from "../AuthContext.jsx";
 import { FaUserCircle } from "react-icons/fa"; // import user icon
+import { FiExternalLink } from "react-icons/fi";
+import { FiLogIn } from "react-icons/fi";
 const Navbar = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const { user, isAuthenticated, loading, logout } = useAuth();
   const navigate = useNavigate();
+
+  // local "version" to force rerender in rare cases where context consumers don't update
+  const [, setAuthVersion] = useState(0);
+  useEffect(() => {
+    const onAuthChanged = () => setAuthVersion((v) => v + 1);
+    window.addEventListener("authChanged", onAuthChanged);
+    return () => window.removeEventListener("authChanged", onAuthChanged);
+  }, []);
 
   const handleLogout = async () => {
     try {
@@ -47,31 +57,38 @@ const Navbar = () => {
                   {link.name}
                 </Link>
               ))}
+              <a
+                href="https://medicore-admin.netlify.app/login"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center text-gray-700 gap-2 px-4 py-2 rounded-lg shadow hover:text-blue-600 transition"
+              >
+                Admin
+                <FiExternalLink className="w-4 h-4" />
+              </a>
 
-              {!loading &&
-                (isAuthenticated ? (
-                  <>
-                    <Link
-                      to="/dashboard"
-                      className="text-gray-700 hover:text-blue-600 font-medium"
-                    >
-                      {user?.firstName || "Dashboard"}
-                    </Link>
-                    <button
-                      onClick={handleLogout}
-                      className="ml-4 bg-red-600 hover:bg-red-700 text-white px-4 py-1 rounded-lg transition"
-                    >
-                      Logout
-                    </button>
-                  </>
-                ) : (
-                  <button
-                    onClick={() => navigate("/login")}
-                    className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-1 rounded-lg transition"
+              {!loading && isAuthenticated ? (
+                <>
+                  <Link
+                    to="/dashboard"
+                    className="flex items-center space-x-3 px-4 py-2 bg-blue-50 text-blue-700 rounded-full hover:bg-blue-100 shadow-sm transition-all duration-200 hover:shadow-md font-medium"
                   >
-                    Login
-                  </button>
-                ))}
+                    <div className="p-1 bg-blue-200 rounded-full text-blue-700">
+                      <FaUserCircle className="text-xl" />
+                    </div>
+                    <span>{user?.firstName || user?.name}</span>
+                  </Link>
+                </>
+              ) : (
+                <button
+                  onClick={() => navigate("/login")}
+                  className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded-lg shadow transition cursor-pointer"
+                >
+                  Login
+                  <FiLogIn className="w-4 h-4" />
+                </button>
+
+              )}
             </div>
 
             {/* Mobile Hamburger */}
@@ -115,12 +132,14 @@ const Navbar = () => {
               <>
                 <Link
                   to="/dashboard"
-                  className="text-gray-700 hover:text-blue-600 font-medium"
-                  onClick={() => setSidebarOpen(false)}
+                  className="flex items-center space-x-2 text-gray-700 hover:text-blue-600 font-medium"
                 >
                   <FaUserCircle className="text-xl" />
-                  {user?.firstName || "Dashboard"}
+                  <span>{user?.firstName || user?.name || "Dashboard"}</span>
                 </Link>
+
+
+
                 <button
                   onClick={handleLogout}
                   className="bg-red-600 hover:bg-red-700 text-white px-4 py-1 rounded-lg transition"

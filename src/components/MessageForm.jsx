@@ -12,6 +12,7 @@ const MessageForm = () => {
   });
 
   const [errors, setErrors] = useState({});
+  const [loading, setLoading] = useState(false); // loading state
 
   const validateForm = () => {
     const { firstName, lastName, email, phone, message } = formData;
@@ -43,6 +44,7 @@ const MessageForm = () => {
     e.preventDefault();
     if (!validateForm()) return;
 
+    setLoading(true); // start loading
     try {
       const { data } = await axios.post(
         "https://medicore-backend-sv2c.onrender.com/api/v1/message/",
@@ -61,8 +63,11 @@ const MessageForm = () => {
         phone: "",
         message: "",
       });
+      window.dispatchEvent(new Event("messageUpdated"));
     } catch (err) {
       toast.error(err.response?.data?.message || "Something went wrong!");
+    } finally {
+      setLoading(false); // stop loading
     }
   };
 
@@ -172,9 +177,11 @@ const MessageForm = () => {
         <div className="text-center">
           <button
             type="submit"
-            className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg shadow-md transition"
+            disabled={loading} // disable when loading
+            className={`bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg shadow-md transition ${loading ? "opacity-50 cursor-not-allowed" : ""
+              }`}
           >
-            Send Message
+            {loading ? "Sending..." : "Send Message"}
           </button>
         </div>
       </form>

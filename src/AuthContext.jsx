@@ -1,11 +1,8 @@
+// src/AuthContext.jsx
 import { createContext, useState, useEffect, useContext } from "react";
 import axios from "axios";
 
-// Create context
 const AuthContext = createContext();
-
-// Global Axios settings
-axios.defaults.withCredentials = true; // always send cookies
 
 export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
@@ -20,14 +17,8 @@ export const AuthProvider = ({ children }) => {
                     "https://medicore-backend-sv2c.onrender.com/api/v1/user/patient/me",
                     { withCredentials: true }
                 );
-
-                if (res.data.user) {
-                    setUser(res.data.user);
-                    setIsAuthenticated(true);
-                } else {
-                    setUser(null);
-                    setIsAuthenticated(false);
-                }
+                setUser(res.data.user);
+                setIsAuthenticated(true);
             } catch (err) {
                 setUser(null);
                 setIsAuthenticated(false);
@@ -35,39 +26,38 @@ export const AuthProvider = ({ children }) => {
                 setLoading(false);
             }
         };
-
         checkLogin();
     }, []);
 
-    // Login function
-    const login = async (email, password) => {
-        try {
-            const res = await axios.post(
-                "https://medicore-backend-sv2c.onrender.com/api/v1/user/login",
-                { email, password },
-                { withCredentials: true }
-            );
-
-            setUser(res.data.user);
+    // login: set state and dispatch global event, return a Promise so callers can await
+    const login = (userData) => {
+        return new Promise((resolve) => {
+            setUser(userData);
             setIsAuthenticated(true);
-            return { success: true };
-        } catch (err) {
-            return { success: false, message: err?.response?.data?.message || "Login failed" };
-        }
+
+            // Give React a tick to re-render interested components, then resolve and dispatch event
+            // setTimeout 0 is cross-environment and reliable
+            setTimeout(() => {
+                // notify any non-react listeners (or defensive components)
+                window.dispatchEvent(new Event("authChanged"));
+                resolve(userData);
+            }, 0);
+        });
     };
 
-    // Logout function
+    // logout: clear state and dispatch event
     const logout = async () => {
         try {
-            await axios.get(
-                "https://medicore-backend-sv2c.onrender.com/api/v1/user/patient/logout",
-                { withCredentials: true }
-            );
+            await axios.get("https://medicore-backend-sv2c.onrender.com/api/v1/user/patient/logout", {
+                withCredentials: true,
+            });
         } catch (err) {
             console.error("Logout failed", err);
         } finally {
             setUser(null);
             setIsAuthenticated(false);
+            // notify listeners immediately after clearing state
+            window.dispatchEvent(new Event("authChanged"));
         }
     };
 
@@ -78,5 +68,4 @@ export const AuthProvider = ({ children }) => {
     );
 };
 
-// Custom hook
 export const useAuth = () => useContext(AuthContext);

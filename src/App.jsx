@@ -1,17 +1,15 @@
 import React from "react";
-import "./App.css";
-import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 import Home from "./Pages/Home";
 import Appointment from "./Pages/Appointment";
 import AboutUs from "./Pages/AboutUs";
 import Register from "./Pages/Register";
-import Footer from "./components/Footer";
-import Navbar from "./components/Navbar";
-import { ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
 import Login from "./Pages/Login";
+import Dashboard from "./Pages/Dashboard";
+import Navbar from "./components/Navbar";
+import Footer from "./components/Footer";
 import { useAuth } from "./AuthContext.jsx";
-import Dashboard from "./Pages/Dashboard"; // import your Dashboard page
+import "./App.css"
 
 const App = () => {
   const { loading, isAuthenticated } = useAuth();
@@ -21,7 +19,7 @@ const App = () => {
   }
 
   return (
-    <Router>
+    <>
       <Navbar />
       <Routes>
         <Route path="/" element={<Home />} />
@@ -38,17 +36,14 @@ const App = () => {
           path="/login"
           element={isAuthenticated ? <Navigate to="/" replace /> : <Login />}
         />
-        {/* Add Dashboard route */}
         <Route
           path="/dashboard"
           element={isAuthenticated ? <Dashboard /> : <Navigate to="/login" replace />}
         />
       </Routes>
       <Footer />
-      <ToastContainer position="top-center" />
-    </Router>
+    </>
   );
 };
 
-
-export default App;  
+export default App;
