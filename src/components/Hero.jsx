@@ -2,7 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 
 
-const Hero = ({ title, imageUrl }) => {
+const Hero = ({ title, imageUrl, data }) => {
   return (
     <section className="relative bg-gradient-to-r from-indigo-50 to-white overflow-hidden py-20 lg:py-32">
       {/* Decorative shapes */}
@@ -22,7 +22,7 @@ const Hero = ({ title, imageUrl }) => {
             <Link
               to="/appointment"
               className="inline-block px-6 py-3 bg-indigo-600 text-white font-semibold rounded-lg shadow-md hover:shadow-lg transition transform hover:-translate-y-1">
-              Book Appointment
+              {data}
             </Link>
           </div>
         </div>

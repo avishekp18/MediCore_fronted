@@ -115,7 +115,7 @@ const Navbar = () => {
           </button>
         </div>
 
-        <div className="flex flex-col mt-4 space-y-3 px-4">
+        <div className="flex flex-col mt-4 space-y-3 px-4 gap-2">
           {links.map((link) => (
             <Link
               key={link.to}
@@ -126,6 +126,15 @@ const Navbar = () => {
               {link.name}
             </Link>
           ))}
+          <a
+            href="https://medicore-admin.netlify.app/login"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center text-gray-700  gap-2 px-4 py-2 rounded-lg shadow hover:text-blue-600 transition"
+          >
+            Admin
+            <FiExternalLink className="w-4 h-4" />
+          </a>
 
           {!loading &&
             (isAuthenticated ? (
@@ -142,7 +151,7 @@ const Navbar = () => {
 
                 <button
                   onClick={handleLogout}
-                  className="bg-red-600 hover:bg-red-700 text-white px-4 py-1 rounded-lg transition"
+                  className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg transition mt-10"
                 >
                   Logout
                 </button>
@@ -153,7 +162,7 @@ const Navbar = () => {
                   navigate("/login");
                   setSidebarOpen(false);
                 }}
-                className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-1 rounded-lg transition"
+                className="bottom-0 bg-blue-600 hover:bg-blue-700 text-white px-4 py-1 rounded-lg transition"
               >
                 Login
               </button>

@@ -7,8 +7,8 @@ const Footer = () => {
   return (
     <footer className="relative bg-gray-900 text-gray-200 pt-20 pb-10 overflow-hidden">
       {/* Decorative shapes */}
-      <div className="absolute -top-20 -left-20 w-72 h-72 bg-indigo-600 rounded-full opacity-20 blur-3xl animate-pulse"></div>
-      <div className="absolute -bottom-20 -right-20 w-80 h-80 bg-green-500 rounded-full opacity-10 blur-3xl animate-pulse"></div>
+      {/* <div className="absolute -top-20 -left-20 w-72 h-72 bg-indigo-600 rounded-full opacity-20 blur-3xl animate-pulse"></div>
+      <div className="absolute -bottom-20 -right-20 w-80 h-80 bg-green-500 rounded-full opacity-10 blur-3xl animate-pulse"></div> */}
 
       <div className="relative max-w-7xl mx-auto px-6 lg:px-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-12">
 
@@ -43,7 +43,7 @@ const Footer = () => {
               <Link to="/about" className="hover:text-green-400 transition-colors">About Us</Link>
             </li>
             <li>
-              <Link to="/contact" className="hover:text-green-400 transition-colors">Contact</Link>
+              <Link to="/" className="hover:text-green-400 transition-colors">Contact</Link>
             </li>
           </ul>
         </div>
@@ -78,7 +78,7 @@ const Footer = () => {
       {/* Bottom */}
       <div className="mt-16 border-t border-gray-700 pt-6 text-center text-gray-400 text-sm flex flex-col sm:flex-row justify-center items-center gap-2">
         <p>© {new Date().getFullYear()} MediCore. All rights reserved.</p>
-        <p className="text-green-400">Designed with ❤️</p>
+        <p className="text-green-400">Designed By Avishek ❤️</p>
       </div>
     </footer>
   );
