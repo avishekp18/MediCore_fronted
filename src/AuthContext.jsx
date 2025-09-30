@@ -9,35 +9,46 @@ export const AuthProvider = ({ children }) => {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [loading, setLoading] = useState(true);
 
-    // Run once on app load
+    // Restore session on mount
     useEffect(() => {
-        const checkSession = async () => {
+        const checkLogin = async () => {
             try {
-                const res = await axios.get("/api/v1/user/patient/me", {
-                    withCredentials: true,
-                });
+                const res = await axios.get(
+                    "https://medicore-backend-sv2c.onrender.com/api/v1/user/patient/me",
+                    { withCredentials: true }
+                );
                 setUser(res.data.user);
                 setIsAuthenticated(true);
-            } catch {
+            } catch (err) {
                 setUser(null);
                 setIsAuthenticated(false);
             } finally {
                 setLoading(false);
             }
         };
-
-        checkSession();
+        checkLogin();
     }, []);
 
-    // Call this after successful login
+    // login: set state and dispatch global event, return a Promise so callers can await
     const login = (userData) => {
-        setUser(userData);
-        setIsAuthenticated(true);
+        return new Promise((resolve) => {
+            setUser(userData);
+            setIsAuthenticated(true);
+
+            // Give React a tick to re-render interested components, then resolve and dispatch event
+            // setTimeout 0 is cross-environment and reliable
+            setTimeout(() => {
+                // notify any non-react listeners (or defensive components)
+                window.dispatchEvent(new Event("authChanged"));
+                resolve(userData);
+            }, 0);
+        });
     };
 
+    // logout: clear state and dispatch event
     const logout = async () => {
         try {
-            await axios.get("/api/v1/user/patient/logout", {
+            await axios.get("https://medicore-backend-sv2c.onrender.com/api/v1/user/patient/logout", {
                 withCredentials: true,
             });
         } catch (err) {
@@ -45,18 +56,14 @@ export const AuthProvider = ({ children }) => {
         } finally {
             setUser(null);
             setIsAuthenticated(false);
+            // notify listeners immediately after clearing state
+            window.dispatchEvent(new Event("authChanged"));
         }
     };
 
     return (
-        <AuthContext.Provider value={{ user, isAuthenticated, login, logout, loading }}>
-            {loading ? (
-                <div className="flex items-center justify-center h-screen">
-                    <p className="text-lg font-semibold">Loading...</p>
-                </div>
-            ) : (
-                children
-            )}
+        <AuthContext.Provider value={{ user, isAuthenticated, loading, login, logout }}>
+            {!loading && children}
         </AuthContext.Provider>
     );
 };
