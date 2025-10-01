@@ -9,6 +9,8 @@ const AboutUs = () => {
         title="Learn More About Us | MediCore Medical Institute"
         imageUrl="/about.png"
         className="relative z-10"
+        data="Go to Blog"
+        onButtonClick={() => window.location.href = "/blog"}
       />
 
       {/* Biography Section */}

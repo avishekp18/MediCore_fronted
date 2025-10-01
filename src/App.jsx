@@ -9,6 +9,8 @@ import Dashboard from "./Pages/Dashboard";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import { useAuth } from "./AuthContext.jsx";
+import Blog from "./Pages/Blog.jsx";
+import ScrollToTop from "./components/ScrollToTop.jsx";
 import "./App.css"
 
 const App = () => {
@@ -21,6 +23,7 @@ const App = () => {
   return (
     <>
       <Navbar />
+      <ScrollToTop />
       <Routes>
         <Route path="/" element={<Home />} />
         <Route
@@ -39,6 +42,10 @@ const App = () => {
         <Route
           path="/dashboard"
           element={isAuthenticated ? <Dashboard /> : <Navigate to="/login" replace />}
+        />
+        <Route
+          path="/blog"
+          element={isAuthenticated ? <Blog /> : <Navigate to="/blog" replace />}
         />
       </Routes>
       <Footer />

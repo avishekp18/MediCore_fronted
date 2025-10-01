@@ -1,7 +1,6 @@
 // src/components/Login.jsx
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import axios from "axios";
 import { toast } from "react-toastify";
 import { useAuth } from "../AuthContext.jsx";
 
@@ -12,7 +11,6 @@ const Login = () => {
   const [formData, setFormData] = useState({ email: "", password: "" });
   const [submitting, setSubmitting] = useState(false);
 
-  // Redirect automatically when login succeeds
   useEffect(() => {
     if (isAuthenticated) navigate("/", { replace: true });
   }, [isAuthenticated, navigate]);
@@ -26,19 +24,9 @@ const Login = () => {
     setSubmitting(true);
 
     try {
-      const backendURL = "https://medicore-backend-sv2c.onrender.com";
-      const { data } = await axios.post(
-        `${backendURL}/api/v1/user/login`,
-        { ...formData, role: "Patient" },
-        { withCredentials: true, headers: { "Content-Type": "application/json" } }
-      );
-
-      // Wait for the context to be updated before navigating.
-      // after successful login response
-      await login(data.user);
-      toast.success(data.message || "Login successful");
+      await login({ ...formData, role: "Patient" }); // ✅ just call context
+      toast.success("Login successful");
       navigate("/", { replace: true });
-
     } catch (err) {
       toast.error(err?.response?.data?.message || "Login failed");
     } finally {
@@ -47,7 +35,6 @@ const Login = () => {
   };
 
   return (
-    /* ... your JSX unchanged ... */
     <div className="min-h-[calc(100vh-64px)] flex items-center justify-center bg-gradient-to-br from-indigo-50 to-white py-10">
       <div className="bg-white shadow-2xl rounded-3xl max-w-md w-full p-8 sm:p-10">
         <h2 className="text-3xl font-bold text-center text-gray-800 mb-2">Sign In</h2>

@@ -1,5 +1,5 @@
 // src/AuthContext.jsx
-import { createContext, useState, useEffect, useContext } from "react";
+import { createContext, useState, useEffect, useContext, useCallback } from "react";
 import axios from "axios";
 
 const AuthContext = createContext();
@@ -9,46 +9,47 @@ export const AuthProvider = ({ children }) => {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [loading, setLoading] = useState(true);
 
-    // Restore session on mount
-    useEffect(() => {
-        const checkLogin = async () => {
-            try {
-                const res = await axios.get(
-                    "https://medicore-backend-sv2c.onrender.com/api/v1/user/patient/me",
-                    { withCredentials: true }
-                );
-                setUser(res.data.user);
-                setIsAuthenticated(true);
-            } catch (err) {
-                setUser(null);
-                setIsAuthenticated(false);
-            } finally {
-                setLoading(false);
-            }
-        };
-        checkLogin();
+    const backendURL = "https://medicore-backend-sv2c.onrender.com";
+
+    // ✅ Fetch current user (used on mount + after login)
+    const fetchMe = useCallback(async () => {
+        try {
+            const res = await axios.get(`${backendURL}/api/v1/user/patient/me`, {
+                withCredentials: true,
+            });
+            setUser(res.data.user);
+            setIsAuthenticated(true);
+        } catch (err) {
+            setUser(null);
+            setIsAuthenticated(false);
+        } finally {
+            setLoading(false);
+        }
     }, []);
 
-    // login: set state and dispatch global event, return a Promise so callers can await
-    const login = (userData) => {
-        return new Promise((resolve) => {
-            setUser(userData);
-            setIsAuthenticated(true);
+    // Restore session on mount
+    useEffect(() => {
+        fetchMe();
+    }, [fetchMe]);
 
-            // Give React a tick to re-render interested components, then resolve and dispatch event
-            // setTimeout 0 is cross-environment and reliable
-            setTimeout(() => {
-                // notify any non-react listeners (or defensive components)
-                window.dispatchEvent(new Event("authChanged"));
-                resolve(userData);
-            }, 0);
+    // ✅ Login: only sets cookie, then fetches canonical user
+    const login = async (credentials) => {
+        await axios.post(`${backendURL}/api/v1/user/login`, credentials, {
+            withCredentials: true,
+            headers: { "Content-Type": "application/json" },
         });
+
+        // After successful login → fetch canonical user
+        await fetchMe();
+
+        // Dispatch event (if you want non-React listeners to know)
+        window.dispatchEvent(new Event("authChanged"));
     };
 
-    // logout: clear state and dispatch event
+    // ✅ Logout: clear cookie + state
     const logout = async () => {
         try {
-            await axios.get("https://medicore-backend-sv2c.onrender.com/api/v1/user/patient/logout", {
+            await axios.get(`${backendURL}/api/v1/user/patient/logout`, {
                 withCredentials: true,
             });
         } catch (err) {
@@ -56,7 +57,6 @@ export const AuthProvider = ({ children }) => {
         } finally {
             setUser(null);
             setIsAuthenticated(false);
-            // notify listeners immediately after clearing state
             window.dispatchEvent(new Event("authChanged"));
         }
     };

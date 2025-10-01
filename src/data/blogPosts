@@ -1,0 +1,67 @@
+export const blogPosts = [
+  {
+    id: 1,
+    title: "5 Tips for a Healthy Heart",
+    snippet:
+      "Learn how to maintain cardiovascular health with simple lifestyle changes.",
+    imageUrl:
+      "https://images.creator-prod.zmags.com/image/upload/q_auto,f_auto/c_scale,w_480/5f5edf92ad04231c967cdd6b.jpeg", // Heart-healthy concept
+    link: "https://www.healthline.com/health/heart-health-tips",
+  },
+  {
+    id: 2,
+    title: "Managing Stress Effectively",
+    snippet:
+      "Discover techniques to reduce stress and improve mental wellness.",
+    imageUrl:
+      "https://mimood.com/wp-content/uploads/2024/12/1708622786243-600x380.png", // Calm/meditation
+    link: "https://www.verywellmind.com/ways-to-manage-stress-3145195",
+  },
+  {
+    id: 3,
+    title: "Nutrition Guide for Patients",
+    snippet: "A practical guide to balanced nutrition for a healthier life.",
+    imageUrl:
+      "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=800&q=80", // Healthy food
+    link: "https://www.nhs.uk/live-well/eat-well/the-eatwell-guide/",
+  },
+  {
+    id: 4,
+    title: "Understanding Mental Health",
+    snippet: "Insights into mental health challenges and coping strategies.",
+    imageUrl:
+      "https://cdn01.alison-static.net/courses/6075/alison_courseware_intro_6075.jpg", // Mental health concept
+    link: "https://www.mentalhealth.gov/basics/what-is-mental-health",
+  },
+  {
+    id: 5,
+    title: "The Importance of Regular Exercise",
+    snippet: "How consistent physical activity benefits overall health.",
+    imageUrl: "https://www.texasfamilyfitness.com/hubfs/gym.jpg", // Exercise/fitness
+    link: "https://www.cdc.gov/physical-activity/basics/index.htm",
+  },
+  {
+    id: 6,
+    title: "Sleep Hygiene Tips",
+    snippet: "Improving sleep quality for better health and productivity.",
+    imageUrl:
+      "https://tinymedicine.org/wp-content/uploads/2020/12/sleep-hygiene-tips-01.png", // Sleep concept
+    link: "https://www.sleepfoundation.org/sleep-hygiene",
+  },
+  {
+    id: 7,
+    title: "Healthy Eating Habits",
+    snippet: "Building sustainable eating habits for long-term wellness.",
+    imageUrl:
+      "https://images.ctfassets.net/qw8ps43tg2ux/1um0r8qWOdvW7tmuVVnTcG/f9dd8d867837364e9fd6bae77b5ef613/issa-simple-ways-to-improve-diet.jpg?fm=webp&w=1440&q=75", // Healthy meal
+    link: "https://www.choosemyplate.gov/eathealthy",
+  },
+  {
+    id: 8,
+    title: "Preventive Healthcare Practices",
+    snippet: "Steps to take for preventing common health issues.",
+    imageUrl:
+      "https://lotusdiagnostic.com/wp-content/uploads/2023/01/close-up-doctor-with-stethoscope.jpg", // Healthcare concept
+    link: "https://www.who.int/news-room/fact-sheets/detail/preventing-disease-through-healthy-lifestyles",
+  },
+];

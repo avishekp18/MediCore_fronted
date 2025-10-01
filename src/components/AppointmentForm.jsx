@@ -146,7 +146,7 @@ const AppointmentForm = () => {
   };
 
   return (
-    <div className="min-h-[calc(100vh-64px)] flex items-center justify-center bg-indigo-50 py-10 px-4">
+    <div id="appointment-form" className="min-h-[calc(100vh-64px)] flex items-center justify-center bg-indigo-50 py-10 px-4">
       <div className="bg-white shadow-2xl rounded-3xl max-w-4xl w-full p-8 sm:p-10">
         <h2 className="text-3xl font-bold text-gray-800 mb-6 text-center">
           Book an Appointment

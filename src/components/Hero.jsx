@@ -2,7 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 
 
-const Hero = ({ title, imageUrl, data }) => {
+const Hero = ({ title, imageUrl, data, onButtonClick }) => {
   return (
     <section className="relative bg-gradient-to-r from-indigo-50 to-white overflow-hidden py-20 lg:py-32">
       {/* Decorative shapes */}
@@ -19,11 +19,12 @@ const Hero = ({ title, imageUrl, data }) => {
             MediCore Medical Institute offers expert, compassionate care tailored to each patient. Our skilled team ensures a smooth, seamless journey toward optimal health and wellness.
           </p>
           <div className="mt-4">
-            <Link
-              to="/appointment"
-              className="inline-block px-6 py-3 bg-indigo-600 text-white font-semibold rounded-lg shadow-md hover:shadow-lg transition transform hover:-translate-y-1">
+            <button
+              onClick={onButtonClick}
+              className="inline-block px-6 py-3 bg-indigo-600 text-white font-semibold rounded-lg shadow-md hover:shadow-lg transition transform hover:-translate-y-1"
+            >
               {data}
-            </Link>
+            </button>
           </div>
         </div>
 

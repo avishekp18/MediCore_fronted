@@ -34,16 +34,24 @@ const Footer = () => {
           <h4 className="text-xl font-semibold text-white border-b border-green-500 pb-2">Quick Links</h4>
           <ul className="space-y-2">
             <li>
-              <Link to="/" className="hover:text-green-400 transition-colors">Home</Link>
+              <Link to="/"
+                onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+                className="hover:text-green-400 transition-colors">Home</Link>
             </li>
             <li>
-              <Link to="/appointment" className="hover:text-green-400 transition-colors">Appointment</Link>
+              <Link to="/appointment"
+                onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+                className="hover:text-green-400 transition-colors">Appointment</Link>
             </li>
             <li>
-              <Link to="/about" className="hover:text-green-400 transition-colors">About Us</Link>
+              <Link to="/about"
+                onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+                className="hover:text-green-400 transition-colors">About Us</Link>
             </li>
             <li>
-              <Link to="/" className="hover:text-green-400 transition-colors">Contact</Link>
+              <Link to="/blog"
+                onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+                className="hover:text-green-400 transition-colors">Blogs</Link>
             </li>
           </ul>
         </div>
