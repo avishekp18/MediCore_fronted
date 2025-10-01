@@ -11,6 +11,7 @@ import Footer from "./components/Footer";
 import { useAuth } from "./AuthContext.jsx";
 import Blog from "./Pages/Blog.jsx";
 import ScrollToTop from "./components/ScrollToTop.jsx";
+import ProtectedRoute from "./components/ProtectedRoute.jsx";
 import "./App.css"
 
 const App = () => {
@@ -26,28 +27,30 @@ const App = () => {
       <ScrollToTop />
       <Routes>
         <Route path="/" element={<Home />} />
+        <Route path="/about" element={<AboutUs />} />
+        <Route path="/blog" element={<Blog />} /> {/* or wrap in ProtectedRoute if needed */}
+        <Route path="/register" element={isAuthenticated ? <Navigate to="/" replace /> : <Register />} />
+        <Route path="/login" element={isAuthenticated ? <Navigate to="/" replace /> : <Login />} />
+
+        {/* Protected Routes */}
         <Route
           path="/appointment"
-          element={isAuthenticated ? <Appointment /> : <Navigate to="/login" replace />}
-        />
-        <Route path="/about" element={<AboutUs />} />
-        <Route
-          path="/register"
-          element={isAuthenticated ? <Navigate to="/" replace /> : <Register />}
-        />
-        <Route
-          path="/login"
-          element={isAuthenticated ? <Navigate to="/" replace /> : <Login />}
+          element={
+            <ProtectedRoute>
+              <Appointment />
+            </ProtectedRoute>
+          }
         />
         <Route
           path="/dashboard"
-          element={isAuthenticated ? <Dashboard /> : <Navigate to="/login" replace />}
-        />
-        <Route
-          path="/blog"
-          element={isAuthenticated ? <Blog /> : <Navigate to="/blog" replace />}
+          element={
+            <ProtectedRoute>
+              <Dashboard />
+            </ProtectedRoute>
+          }
         />
       </Routes>
+
       <Footer />
     </>
   );

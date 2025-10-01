@@ -96,7 +96,7 @@ const Dashboard = () => {
                     {/* Logout Button */}
                     <button
                         onClick={handleLogout}
-                        className="bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-xl shadow transition transform hover:-translate-y-1"
+                        className="bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-xl shadow cursor-pointer transition transform hover:-translate-y-1"
                     >
                         Logout
                     </button>
@@ -128,7 +128,7 @@ const Dashboard = () => {
                     <button
                         onClick={fetchAppointments}
                         disabled={refreshing}
-                        className={`px-4 py-2 rounded-full border border-gray-300 font-medium text-gray-700 transition ${refreshing ? "opacity-50 cursor-not-allowed" : "hover:bg-gray-100"
+                        className={`px-4 py-2 rounded-full border border-gray-300 font-medium text-gray-700 cursor-pointer transition ${refreshing ? "opacity-50 cursor-not-allowed" : "hover:bg-gray-100"
                             }`}
                     >
                         {refreshing ? "Refreshing..." : "Refresh"}

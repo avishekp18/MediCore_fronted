@@ -14,7 +14,7 @@ export const blogPosts = [
     snippet:
       "Discover techniques to reduce stress and improve mental wellness.",
     imageUrl:
-      "https://mimood.com/wp-content/uploads/2024/12/1708622786243-600x380.png", // Calm/meditation
+      "https://tse2.mm.bing.net/th/id/OIP.4IAO3AOvP74IkXpnYJegoAHaEK?rs=1&pid=ImgDetMain&o=7&rm=3", // Calm/meditation
     link: "https://www.verywellmind.com/ways-to-manage-stress-3145195",
   },
   {

@@ -12,8 +12,6 @@ const AppointmentForm = () => {
     lastName: "",
     email: "",
     phone: "",
-    nic: "",
-    dob: "",
     gender: "",
     appointmentDate: "",
     department: "Pediatrics",
@@ -128,8 +126,6 @@ const AppointmentForm = () => {
       setFormData((prev) => ({
         ...prev,
         phone: "",
-        nic: "",
-        dob: "",
         gender: "",
         appointmentDate: "",
         doctorId: "",
@@ -189,26 +185,6 @@ const AppointmentForm = () => {
               name="phone"
               placeholder="Phone"
               value={formData.phone}
-              onChange={handleChange}
-              className="w-full border border-gray-300 rounded-xl p-3 focus:ring-2 focus:ring-indigo-500 focus:outline-none"
-            />
-          </div>
-
-          {/* NIC & DOB */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <input
-              type="text"
-              name="nic"
-              placeholder="NIC"
-              value={formData.nic}
-              onChange={handleChange}
-              className="w-full border border-gray-300 rounded-xl p-3 focus:ring-2 focus:ring-indigo-500 focus:outline-none"
-            />
-            <input
-              type="date"
-              name="dob"
-              placeholder="Date of Birth"
-              value={formData.dob}
               onChange={handleChange}
               className="w-full border border-gray-300 rounded-xl p-3 focus:ring-2 focus:ring-indigo-500 focus:outline-none"
             />
@@ -298,7 +274,7 @@ const AppointmentForm = () => {
           <button
             type="submit"
             disabled={submitting}
-            className={`w-full bg-indigo-600 text-white font-semibold py-3 rounded-xl shadow-lg transition transform hover:-translate-y-1 ${submitting ? "opacity-50 cursor-not-allowed" : "hover:bg-indigo-700"
+            className={`w-full bg-indigo-600 text-white font-semibold py-3 rounded-xl shadow-lg cursor-pointer transition transform hover:-translate-y-1 ${submitting ? "opacity-50 cursor-not-allowed" : "hover:bg-indigo-700"
               }`}
           >
             {submitting ? "Booking..." : "Book Appointment"}

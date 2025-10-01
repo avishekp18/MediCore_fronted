@@ -1,6 +1,6 @@
 // src/pages/Blog.jsx
 import React from "react";
-import { blogPosts } from "../data/blogPosts"; // make sure to export your array
+import { blogPosts } from "../data/blogPosts.js"; // make sure to export your array
 
 const Blog = () => {
     return (

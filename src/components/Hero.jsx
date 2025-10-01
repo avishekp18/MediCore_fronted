@@ -21,7 +21,7 @@ const Hero = ({ title, imageUrl, data, onButtonClick }) => {
           <div className="mt-4">
             <button
               onClick={onButtonClick}
-              className="inline-block px-6 py-3 bg-indigo-600 text-white font-semibold rounded-lg shadow-md hover:shadow-lg transition transform hover:-translate-y-1"
+              className="inline-block px-6 py-3 bg-indigo-600 text-white font-semibold rounded-lg shadow-md hover:shadow-lg transition transform hover:-translate-y-1 cursor-pointer"
             >
               {data}
             </button>

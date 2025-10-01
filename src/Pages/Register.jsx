@@ -245,7 +245,7 @@ const Register = () => {
             <button
               type="submit"
               disabled={loading}
-              className={`bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg shadow-md transition ${loading ? "opacity-50 cursor-not-allowed" : ""
+              className={`bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg shadow-md cursor-pointer transition ${loading ? "opacity-50 cursor-not-allowed" : ""
                 }`}
             >
               {loading ? "Registering..." : "Register"}

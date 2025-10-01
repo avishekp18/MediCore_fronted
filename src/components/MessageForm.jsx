@@ -24,7 +24,7 @@ const MessageForm = () => {
       newErrors.lastName = "Last name must be at least 3 characters.";
     if (!email || !/^[\w.-]+@[\w.-]+\.\w+$/.test(email))
       newErrors.email = "Please enter a valid email.";
-    if (!phone || phone.length !== 11)
+    if (!phone || phone.length !== 10)
       newErrors.phone = "Phone number must be exactly 11 digits.";
     if (!message || message.length < 10)
       newErrors.message = "Message must be at least 10 characters.";
@@ -72,7 +72,7 @@ const MessageForm = () => {
   };
 
   return (
-    <div className="max-w-3xl mx-auto bg-white shadow-md rounded-xl p-6 mt-10">
+    <div className="max-w-3xl mx-auto bg-white shadow-md rounded-xl p-6 m-10">
       <h2 className="text-2xl font-bold mb-4 text-center">Send Us A Message</h2>
 
       <form onSubmit={handleSubmit} className="space-y-4">
@@ -178,7 +178,7 @@ const MessageForm = () => {
           <button
             type="submit"
             disabled={loading} // disable when loading
-            className={`bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg shadow-md transition ${loading ? "opacity-50 cursor-not-allowed" : ""
+            className={`bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg shadow-md cursor-pointer transition ${loading ? "opacity-50 cursor-not-allowed" : ""
               }`}
           >
             {loading ? "Sending..." : "Send Message"}

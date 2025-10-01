@@ -10,7 +10,7 @@ const Departments = () => {
     { name: "Neurology", imageUrl: "/departments/neuro.jpg" },
     { name: "Oncology", imageUrl: "/departments/onco.jpg" },
     { name: "Radiology", imageUrl: "/departments/radio.jpg" },
-    { name: "Physical Therapy", imageUrl: "/departments/therapy.jpg" },
+    { name: "Therapy", imageUrl: "/departments/therapy.jpg" },
     { name: "Dermatology", imageUrl: "/departments/derma.jpg" },
     { name: "ENT", imageUrl: "/departments/ent.jpg" },
   ];
