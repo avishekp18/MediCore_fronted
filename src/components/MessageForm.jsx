@@ -25,7 +25,7 @@ const MessageForm = () => {
     if (!email || !/^[\w.-]+@[\w.-]+\.\w+$/.test(email))
       newErrors.email = "Please enter a valid email.";
     if (!phone || phone.length !== 10)
-      newErrors.phone = "Phone number must be exactly 11 digits.";
+      newErrors.phone = "Phone number must be exactly 10 digits.";
     if (!message || message.length < 10)
       newErrors.message = "Message must be at least 10 characters.";
 
