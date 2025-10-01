@@ -50,7 +50,7 @@ const Navbar = () => {
               {/* Hamburger */}
               <button
                 onClick={() => setSidebarOpen(true)}
-                className="text-2xl text-gray-700 mr-3 md:hidden"
+                className="text-2xl text-gray-700 mr-3 cursor-pointer md:hidden"
               >
                 <GiHamburgerMenu />
               </button>
@@ -148,7 +148,7 @@ const Navbar = () => {
           <h2 className="text-xl font-bold text-blue-700">
             Medi<span className="text-blue-500">Core</span>
           </h2>
-          <button onClick={() => setSidebarOpen(false)} className="text-2xl">
+          <button onClick={() => setSidebarOpen(false)} className="text-2xl cursor-pointer">
             <IoMdClose />
           </button>
         </div>
@@ -157,7 +157,7 @@ const Navbar = () => {
             <Link
               key={link.name}
               to={link.path}
-              className="text-gray-700 hover:text-blue-600"
+              className="text-gray-700 hover:text-blue-600 cursor-pointer"
               onClick={() => setSidebarOpen(false)}
             >
               {link.name}
@@ -185,7 +185,7 @@ const Navbar = () => {
                 </Link>
                 <button
                   onClick={handleLogout}
-                  className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg transition mt-10"
+                  className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg cursor-pointer transition mt-10"
                 >
                   Logout
                 </button>
@@ -196,7 +196,7 @@ const Navbar = () => {
                   navigate("/login");
                   setSidebarOpen(false);
                 }}
-                className="bottom-0 bg-blue-600 hover:bg-blue-700 text-white px-4 py-1 rounded-lg transition"
+                className="bottom-0 bg-blue-600 hover:bg-blue-700 text-white px-4 py-1 rounded-lg cursor-pointer transition"
               >
                 Login
               </button>
