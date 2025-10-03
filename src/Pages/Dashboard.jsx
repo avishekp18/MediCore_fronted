@@ -62,6 +62,14 @@ const Dashboard = () => {
         toast.success("Logged out successfully");
         navigate("/login");
     };
+    const handleDelete = async (id) => {
+        try {
+            const res = await axios.delete(`https://medicore-backend-sv2c.onrender.com/api/v1/appointment/user/${id}`);
+            setAppointments((prev) => prev.filter((appt) => appt._id !== id));
+        } catch (error) {
+            console.error("Failed to delete appointment:", error);
+        }
+    };
 
     const statusColor = (status) => {
         switch (status?.toLowerCase()) {
@@ -144,7 +152,7 @@ const Dashboard = () => {
                         {appointments.map((appt) => (
                             <div
                                 key={appt._id}
-                                className="bg-white shadow-lg rounded-2xl p-5 border border-gray-100 hover:shadow-xl transition transform hover:-translate-y-1"
+                                className="bg-white shadow-lg rounded-2xl p-5 border border-gray-100 hover:shadow-xl"
                             >
                                 <div className="flex items-center justify-between mb-2">
                                     <h3 className="font-semibold text-lg text-gray-800">
@@ -175,10 +183,17 @@ const Dashboard = () => {
                                             ? new Date(appt.appointmentDate).toLocaleDateString()
                                             : "—"}
                                 </p>
-                                <p className="text-gray-600">
-                                    <span className="font-semibold">Visited:</span>{" "}
-                                    {appt.hasVisited ? "Yes" : "No"}
-                                </p>
+                                <div className="flex items-center justify-between mb-2">
+                                    <p className="text-gray-600">
+                                        <span className="font-semibold">Before Visited:</span>{" "}
+                                        {appt.hasVisited ? "Yes" : "No"}
+                                    </p>
+                                    <button
+                                        className="bg-red-600  hover:bg-red-800 rounded-2xl border-none px-4 py-3 text-white text-sm cursor-pointer transition transform hover:-translate-y-1"
+                                        onClick={() => handleDelete(appt._id)}>
+                                        Delete
+                                    </button>
+                                </div>
                             </div>
                         ))}
                     </div>
