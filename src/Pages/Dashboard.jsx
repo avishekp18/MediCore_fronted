@@ -64,7 +64,7 @@ const Dashboard = () => {
     };
     const handleDelete = async (id) => {
         try {
-            const res = await axios.delete(`https://medicore-backend-sv2c.onrender.com/api/v1/appointment/user/${id}`);
+            const res = await axios.delete(`https://medicore-backend-sv2c.onrender.com/api/v1/appointment/user/${id}`, { withCredentials: true });
             setAppointments((prev) => prev.filter((appt) => appt._id !== id));
         } catch (error) {
             console.error("Failed to delete appointment:", error);
