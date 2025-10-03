@@ -1,6 +1,7 @@
 // src/AuthContext.jsx
 import { createContext, useState, useEffect, useContext, useCallback } from "react";
 import axios from "axios";
+import "./app.css"; // We'll create this CSS file for the spinner animation
 
 const AuthContext = createContext();
 
@@ -11,47 +12,52 @@ export const AuthProvider = ({ children }) => {
 
     const backendURL = "https://medicore-backend-sv2c.onrender.com";
 
-    // ✅ Fetch current user (used on mount + after login)
     const fetchMe = useCallback(async () => {
+        setLoading(true);
         try {
-            const res = await axios.get(`${backendURL}/api/v1/user/patient/me`, {
+            // Try fetching patient info
+            let res = await axios.get(`${backendURL}/api/v1/user/patient/me`, {
                 withCredentials: true,
             });
             setUser(res.data.user);
             setIsAuthenticated(true);
-        } catch (err) {
-            setUser(null);
-            setIsAuthenticated(false);
+        } catch (errPatient) {
+            try {
+                // If patient fetch fails, try admin
+                let res = await axios.get(`${backendURL}/api/v1/user/admin/me`, {
+                    withCredentials: true,
+                });
+                setUser(res.data.user);
+                setIsAuthenticated(true);
+            } catch (errAdmin) {
+                setUser(null);
+                setIsAuthenticated(false);
+            }
         } finally {
             setLoading(false);
         }
     }, []);
 
-    // Restore session on mount
     useEffect(() => {
         fetchMe();
     }, [fetchMe]);
 
-    // ✅ Login: only sets cookie, then fetches canonical user
     const login = async (credentials) => {
         await axios.post(`${backendURL}/api/v1/user/login`, credentials, {
             withCredentials: true,
             headers: { "Content-Type": "application/json" },
         });
-
-        // After successful login → fetch canonical user
         await fetchMe();
-
-        // Dispatch event (if you want non-React listeners to know)
         window.dispatchEvent(new Event("authChanged"));
     };
 
-    // ✅ Logout: clear cookie + state
     const logout = async () => {
         try {
-            await axios.get(`${backendURL}/api/v1/user/patient/logout`, {
-                withCredentials: true,
-            });
+            if (user?.role === "Patient") {
+                await axios.get(`${backendURL}/api/v1/user/patient/logout`, { withCredentials: true });
+            } else if (user?.role === "Admin") {
+                await axios.get(`${backendURL}/api/v1/user/admin/logout`, { withCredentials: true });
+            }
         } catch (err) {
             console.error("Logout failed", err);
         } finally {
@@ -63,7 +69,13 @@ export const AuthProvider = ({ children }) => {
 
     return (
         <AuthContext.Provider value={{ user, isAuthenticated, loading, login, logout }}>
-            {!loading && children}
+            {loading ? (
+                <div className="spinner-container">
+                    <div className="spinner"></div>
+                </div>
+            ) : (
+                children
+            )}
         </AuthContext.Provider>
     );
 };
