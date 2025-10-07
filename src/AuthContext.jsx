@@ -1,7 +1,7 @@
 // src/AuthContext.jsx
 import { createContext, useState, useEffect, useContext, useCallback } from "react";
 import axios from "axios";
-import "./app.css"; // We'll create this CSS file for the spinner animation
+import "./App.css"; // We'll create this CSS file for the spinner animation
 
 const AuthContext = createContext();
 
