@@ -1,57 +1,86 @@
-import React from "react";
+import React, { lazy, Suspense } from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
-import Home from "./Pages/Home";
-import Appointment from "./Pages/Appointment";
-import AboutUs from "./Pages/AboutUs";
-import Register from "./Pages/Register";
-import Login from "./Pages/Login";
-import Dashboard from "./Pages/Dashboard";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
-import { useAuth } from "./AuthContext.jsx";
-import Blog from "./Pages/Blog.jsx";
 import ScrollToTop from "./components/ScrollToTop.jsx";
 import ProtectedRoute from "./components/ProtectedRoute.jsx";
-import "./App.css"
+import { useAuth } from "./AuthContext.jsx";
+import "./App.css";
+
+// Lazy load pages
+const Home = lazy(() => import("./Pages/Home"));
+const AboutUs = lazy(() => import("./Pages/AboutUs"));
+const Blog = lazy(() => import("./Pages/Blog.jsx"));
+const Register = lazy(() => import("./Pages/Register"));
+const Login = lazy(() => import("./Pages/Login"));
+const Appointment = lazy(() => import("./Pages/Appointment"));
+const Dashboard = lazy(() => import("./Pages/Dashboard"));
 
 const App = () => {
   const { loading, isAuthenticated } = useAuth();
 
   if (loading) {
-    return <div className="flex items-center justify-center h-screen text-lg">Loading...</div>;
+    return (
+      <div className="spinner-container">
+        <div className="spinner"></div>
+      </div>
+    );
   }
 
   return (
     <>
       <Navbar />
       <ScrollToTop />
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/about" element={<AboutUs />} />
-        <Route path="/blog" element={<Blog />} /> {/* or wrap in ProtectedRoute if needed */}
-        <Route path="/register" element={isAuthenticated ? <Navigate to="/" replace /> : <Register />} />
-        <Route path="/login" element={isAuthenticated ? <Navigate to="/" replace /> : <Login />} />
 
-        {/* Protected Routes */}
-        <Route
-          path="/appointment"
-          element={
-            <ProtectedRoute>
-              <Appointment />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/dashboard"
-          element={
-            <ProtectedRoute>
-              <Dashboard />
-            </ProtectedRoute>
-          }
-        />
-      </Routes>
+      {/* Suspense fallback while pages load */}
+      <Suspense fallback={<div className="spinner-container">
+        <div className="spinner"></div>
+      </div>}>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/about" element={<AboutUs />} />
+          <Route path="/blog" element={<Blog />} />
+          <Route path="/register" element={isAuthenticated ? <Navigate to="/" replace /> : <Register />} />
+          <Route path="/login" element={isAuthenticated ? <Navigate to="/" replace /> : <Login />} />
+
+          {/* Protected Routes */}
+          <Route
+            path="/appointment"
+            element={
+              <ProtectedRoute>
+                <Appointment />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/dashboard"
+            element={
+              <ProtectedRoute>
+                <Dashboard />
+              </ProtectedRoute>
+            }
+          />
+        </Routes>
+      </Suspense>
 
       <Footer />
+
+      {/* ToastContainer */}
+      <ToastContainer
+        position="top-right"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        style={{ marginTop: "3rem" }}
+      />
     </>
   );
 };
