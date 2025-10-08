@@ -1,11 +1,88 @@
-// src/context/AuthContext.jsx
+// // src/AuthContext.jsx
+// import { createContext, useState, useEffect, useContext, useCallback } from "react";
+// import axios from "axios";
+// import "./App.css"; // Spinner CSS
+
+// const AuthContext = createContext();
+
+// export const AuthProvider = ({ children }) => {
+//     const [user, setUser] = useState(() => {
+//         // Load cached user from localStorage if available
+//         const cached = localStorage.getItem("user");
+//         return cached ? JSON.parse(cached) : null;
+//     });
+//     const [isAuthenticated, setIsAuthenticated] = useState(() => !!localStorage.getItem("user"));
+//     const [loading, setLoading] = useState(!user); // Only show spinner if no cached user
+
+//     const backendURL = "https://medicore-backend-sv2c.onrender.com";
+
+//     // Fetch current user from backend
+//     const fetchMe = useCallback(async () => {
+//         try {
+//             const res = await axios.get(`${backendURL}/api/v1/user/patient/me`, {
+//                 withCredentials: true, // Send JWT cookie
+//             });
+//             setUser(res.data.user);
+//             setIsAuthenticated(true);
+//             localStorage.setItem("user", JSON.stringify(res.data.user)); // Cache
+//         } catch (err) {
+//             setUser(null);
+//             setIsAuthenticated(false);
+//             localStorage.removeItem("user");
+//         } finally {
+//             setLoading(false);
+//         }
+//     }, []);
+
+//     // Run fetchMe on mount
+//     useEffect(() => {
+//         fetchMe();
+//     }, [fetchMe]);
+
+//     // Login function
+//     const login = async (credentials) => {
+//         await axios.post(`${backendURL}/api/v1/user/login`, credentials, {
+//             withCredentials: true,
+//             headers: { "Content-Type": "application/json" },
+//         });
+//         await fetchMe(); // Update user after login
+//         window.dispatchEvent(new Event("authChanged"));
+//     };
+
+//     // Logout function
+//     const logout = async () => {
+//         try {
+//             await axios.get(`${backendURL}/api/v1/user/patient/logout`, { withCredentials: true });
+//         } catch (err) {
+//             console.error("Logout failed", err);
+//         } finally {
+//             setUser(null);
+//             setIsAuthenticated(false);
+//             localStorage.removeItem("user");
+//             window.dispatchEvent(new Event("authChanged"));
+//         }
+//     };
+
+//     return (
+//         <AuthContext.Provider value={{ user, isAuthenticated, loading, login, logout }}>
+//             {loading ? (
+//                 <div className="spinner-container">
+//                     <div className="spinner"></div>
+//                 </div>
+//             ) : (
+//                 children
+//             )}
+//         </AuthContext.Provider>
+//     );
+// };
+
+// export const useAuth = () => useContext(AuthContext);
+// src/AuthContext.jsx
 import { createContext, useState, useEffect, useContext, useCallback } from "react";
 import axios from "axios";
-import "../App.css"; // Spinner styles
+import "./App.css"; // Spinner CSS
 
 const AuthContext = createContext();
-
-const backendURL = "https://medicore-backend-sv2c.onrender.com";
 
 export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(() => {
@@ -18,95 +95,68 @@ export const AuthProvider = ({ children }) => {
     });
 
     const [isAuthenticated, setIsAuthenticated] = useState(() => !!localStorage.getItem("user"));
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState(null);
+    const [loading, setLoading] = useState(false); // 🚀 UI never blocked on mount
+    const [verifying, setVerifying] = useState(false); // Background verification state
 
-    // Configure axios defaults once
-    useEffect(() => {
-        axios.defaults.withCredentials = true;
-        axios.defaults.baseURL = backendURL;
-        axios.defaults.headers.common["Content-Type"] = "application/json";
-    }, []);
+    const backendURL = "https://medicore-backend-sv2c.onrender.com";
 
-    /**
-     * Fetch the authenticated user's profile.
-     * Runs silently on mount and after login.
-     */
+    // 🔹 Silent background verification (runs after UI paint)
     const fetchMe = useCallback(async () => {
+        setVerifying(true);
         try {
-            const res = await axios.get("/api/v1/user/patient/me");
+            const res = await axios.get(`${backendURL}/api/v1/user/patient/me`, {
+                withCredentials: true,
+            });
             setUser(res.data.user);
             setIsAuthenticated(true);
             localStorage.setItem("user", JSON.stringify(res.data.user));
-            setError(null);
-        } catch (err) {
-            console.warn("User session not valid:", err?.response?.status);
+        } catch {
+            // Token invalid — log out silently
             setUser(null);
             setIsAuthenticated(false);
             localStorage.removeItem("user");
+        } finally {
+            setVerifying(false);
         }
     }, []);
 
-    /**
-     * Silent background refresh every 15 minutes (optional)
-     * Helps keep session alive without re-login.
-     */
+    // ✅ Run background check after UI mounts
     useEffect(() => {
-        fetchMe(); // Run on mount
-        const interval = setInterval(fetchMe, 15 * 60 * 1000);
-        return () => clearInterval(interval);
+        // Small delay ensures UI paints first
+        const timer = setTimeout(() => fetchMe(), 500);
+        return () => clearTimeout(timer);
     }, [fetchMe]);
 
-    /**
-     * Login
-     */
+    // ✅ Login
     const login = async (credentials) => {
+        setLoading(true);
         try {
-            setLoading(true);
-            setError(null);
-            await axios.post("/api/v1/user/login", credentials);
+            await axios.post(`${backendURL}/api/v1/user/login`, credentials, {
+                withCredentials: true,
+                headers: { "Content-Type": "application/json" },
+            });
             await fetchMe();
             window.dispatchEvent(new Event("authChanged"));
-        } catch (err) {
-            console.error("Login failed:", err);
-            setError(err?.response?.data?.message || "Login failed. Please try again.");
-            throw err;
         } finally {
             setLoading(false);
         }
     };
 
-    /**
-     * Logout
-     */
+    // ✅ Logout
     const logout = async () => {
+        setLoading(true);
         try {
-            await axios.get("/api/v1/user/patient/logout");
+            await axios.get(`${backendURL}/api/v1/user/patient/logout`, { withCredentials: true });
         } catch (err) {
-            console.warn("Logout error:", err);
+            console.warn("Logout failed", err);
         } finally {
             setUser(null);
             setIsAuthenticated(false);
             localStorage.removeItem("user");
             window.dispatchEvent(new Event("authChanged"));
+            setLoading(false);
         }
     };
-
-    /**
-     * Global Axios interceptor for 401 auto-logout
-     */
-    useEffect(() => {
-        const interceptor = axios.interceptors.response.use(
-            (response) => response,
-            (error) => {
-                if (error.response?.status === 401) {
-                    logout();
-                }
-                return Promise.reject(error);
-            }
-        );
-        return () => axios.interceptors.response.eject(interceptor);
-    }, []);
 
     return (
         <AuthContext.Provider
@@ -114,19 +164,13 @@ export const AuthProvider = ({ children }) => {
                 user,
                 isAuthenticated,
                 loading,
-                error,
+                verifying, // optional: track background check
                 login,
                 logout,
                 refetch: fetchMe,
             }}
         >
-            {loading ? (
-                <div className="spinner-container">
-                    <div className="spinner"></div>
-                </div>
-            ) : (
-                children
-            )}
+            {children}
         </AuthContext.Provider>
     );
 };
