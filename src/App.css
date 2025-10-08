@@ -1,4 +1,7 @@
 @import "tailwindcss";
+#root {
+  min-height: 100vh; /* Avoid layout shift */
+}
 .spinner-container {
   display: flex;
   justify-content: center;

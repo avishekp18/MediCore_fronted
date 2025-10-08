@@ -1,68 +1,64 @@
 // src/AuthContext.jsx
 import { createContext, useState, useEffect, useContext, useCallback } from "react";
 import axios from "axios";
-import "./App.css"; // We'll create this CSS file for the spinner animation
+import "./App.css"; // Spinner CSS
 
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-    const [user, setUser] = useState(null);
-    const [isAuthenticated, setIsAuthenticated] = useState(false);
-    const [loading, setLoading] = useState(true);
+    const [user, setUser] = useState(() => {
+        // Load cached user from localStorage if available
+        const cached = localStorage.getItem("user");
+        return cached ? JSON.parse(cached) : null;
+    });
+    const [isAuthenticated, setIsAuthenticated] = useState(() => !!localStorage.getItem("user"));
+    const [loading, setLoading] = useState(!user); // Only show spinner if no cached user
 
     const backendURL = "https://medicore-backend-sv2c.onrender.com";
 
+    // Fetch current user from backend
     const fetchMe = useCallback(async () => {
-        setLoading(true);
         try {
-            // Try fetching patient info
-            let res = await axios.get(`${backendURL}/api/v1/user/patient/me`, {
-                withCredentials: true,
+            const res = await axios.get(`${backendURL}/api/v1/user/patient/me`, {
+                withCredentials: true, // Send JWT cookie
             });
             setUser(res.data.user);
             setIsAuthenticated(true);
-        } catch (errPatient) {
-            try {
-                // If patient fetch fails, try admin
-                let res = await axios.get(`${backendURL}/api/v1/user/admin/me`, {
-                    withCredentials: true,
-                });
-                setUser(res.data.user);
-                setIsAuthenticated(true);
-            } catch (errAdmin) {
-                setUser(null);
-                setIsAuthenticated(false);
-            }
+            localStorage.setItem("user", JSON.stringify(res.data.user)); // Cache
+        } catch (err) {
+            setUser(null);
+            setIsAuthenticated(false);
+            localStorage.removeItem("user");
         } finally {
             setLoading(false);
         }
     }, []);
 
+    // Run fetchMe on mount
     useEffect(() => {
         fetchMe();
     }, [fetchMe]);
 
+    // Login function
     const login = async (credentials) => {
         await axios.post(`${backendURL}/api/v1/user/login`, credentials, {
             withCredentials: true,
             headers: { "Content-Type": "application/json" },
         });
-        await fetchMe();
+        await fetchMe(); // Update user after login
         window.dispatchEvent(new Event("authChanged"));
     };
 
+    // Logout function
     const logout = async () => {
         try {
-            if (user?.role === "Patient") {
-                await axios.get(`${backendURL}/api/v1/user/patient/logout`, { withCredentials: true });
-            } else if (user?.role === "Admin") {
-                await axios.get(`${backendURL}/api/v1/user/admin/logout`, { withCredentials: true });
-            }
+            await axios.get(`${backendURL}/api/v1/user/patient/logout`, { withCredentials: true });
         } catch (err) {
             console.error("Logout failed", err);
         } finally {
             setUser(null);
             setIsAuthenticated(false);
+            localStorage.removeItem("user");
             window.dispatchEvent(new Event("authChanged"));
         }
     };
