@@ -17,22 +17,42 @@ export const AuthProvider = ({ children }) => {
     const backendURL = "https://medicore-backend-sv2c.onrender.com";
 
     // Fetch current user from backend
+    // const fetchMe = useCallback(async () => {
+    //     try {
+    //         const res = await axios.get(`${backendURL}/api/v1/user/patient/me`, {
+    //             withCredentials: true, // Send JWT cookie
+    //         });
+    //         setUser(res.data.user);
+    //         setIsAuthenticated(true);
+    //         localStorage.setItem("user", JSON.stringify(res.data.user)); // Cache
+    //     } catch (err) {
+    //         setUser(null);
+    //         setIsAuthenticated(false);
+    //         localStorage.removeItem("user");
+    //     } finally {
+    //         setLoading(false);
+    //     }
+    // }, []);
     const fetchMe = useCallback(async () => {
+        const controller = new AbortController();
+        const timeout = setTimeout(() => controller.abort(), 4000); // 8s max wait
+
         try {
             const res = await axios.get(`${backendURL}/api/v1/user/patient/me`, {
-                withCredentials: true, // Send JWT cookie
+                withCredentials: true,
+                signal: controller.signal,
             });
             setUser(res.data.user);
             setIsAuthenticated(true);
-            localStorage.setItem("user", JSON.stringify(res.data.user)); // Cache
+            localStorage.setItem("user", JSON.stringify(res.data.user));
         } catch (err) {
-            setUser(null);
-            setIsAuthenticated(false);
-            localStorage.removeItem("user");
+            console.log("FetchMe timeout or error:", err.message);
         } finally {
+            clearTimeout(timeout);
             setLoading(false);
         }
     }, []);
+
 
     // Run fetchMe on mount
     useEffect(() => {
