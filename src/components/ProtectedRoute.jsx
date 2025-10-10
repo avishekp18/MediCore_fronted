@@ -3,16 +3,16 @@ import { Navigate } from "react-router-dom";
 import { useAuth } from "../AuthContext.jsx";
 import { toast } from "react-toastify";
 
-const ProtectedRoute = ({ children }) => {
+const ProtectedRoute = ({ children, toastMessage }) => {
     const { isAuthenticated } = useAuth();
     const hasToastShown = useRef(false);
 
     useEffect(() => {
-        if (!isAuthenticated && !hasToastShown.current) {
-            toast.info("Please log in first to access this page");
+        if (!isAuthenticated && toastMessage && !hasToastShown.current) {
+            toast.info(toastMessage); // Show custom toast
             hasToastShown.current = true;
         }
-    }, [isAuthenticated]);
+    }, [isAuthenticated, toastMessage]);
 
     if (!isAuthenticated) {
         return <Navigate to="/login" replace />;

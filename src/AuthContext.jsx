@@ -3,6 +3,7 @@ import { createContext, useState, useEffect, useContext, useCallback } from "rea
 import axios from "axios";
 import "./App.css"; // Spinner CSS
 import HomeSkeleton from "./Skeleton/HomeSkeleton";
+import { toast } from "react-toastify";
 
 const AuthContext = createContext();
 
@@ -74,8 +75,10 @@ export const AuthProvider = ({ children }) => {
     const logout = async () => {
         try {
             await axios.get(`${backendURL}/api/v1/user/patient/logout`, { withCredentials: true });
+            toast.success("Logged out successfully"); // Only here
         } catch (err) {
             console.error("Logout failed", err);
+            toast.error("Logout failed");
         } finally {
             setUser(null);
             setIsAuthenticated(false);

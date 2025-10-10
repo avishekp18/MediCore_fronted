@@ -43,7 +43,7 @@ const App = () => {
 
       <ErrorBoundary FallbackComponent={ErrorFallback}>
         <Suspense fallback={<SmallLoader />}>
-          <AnimatePresence mode="wait">
+          <AnimatePresence mode="wait" initial={false}>
             <motion.div
               key={location.pathname}
               initial={{ opacity: 0 }}
@@ -71,7 +71,7 @@ const App = () => {
                 <Route
                   path="/appointment"
                   element={
-                    <ProtectedRoute>
+                    <ProtectedRoute toastMessage="Please log in to access page">
                       <Appointment />
                     </ProtectedRoute>
                   }
@@ -87,8 +87,8 @@ const App = () => {
                 {/* Optional 404 */}
                 <Route path="*" element={<Navigate to="/" replace />} />
               </Routes>
+              <Footer />
             </motion.div>
-            <Footer />
           </AnimatePresence>
         </Suspense>
       </ErrorBoundary>
