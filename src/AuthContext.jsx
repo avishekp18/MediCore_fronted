@@ -2,6 +2,7 @@
 import { createContext, useState, useEffect, useContext, useCallback } from "react";
 import axios from "axios";
 import "./App.css"; // Spinner CSS
+import HomeSkeleton from "./Skeleton/HomeSkeleton";
 
 const AuthContext = createContext();
 
@@ -85,13 +86,7 @@ export const AuthProvider = ({ children }) => {
 
     return (
         <AuthContext.Provider value={{ user, isAuthenticated, loading, login, logout }}>
-            {loading ? (
-                <div className="spinner-container">
-                    <div className="spinner"></div>
-                </div>
-            ) : (
-                children
-            )}
+            {loading ? <HomeSkeleton /> : children}
         </AuthContext.Provider>
     );
 };
